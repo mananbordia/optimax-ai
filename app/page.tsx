@@ -63,8 +63,7 @@ export default function LandingPage() {
               to Place Your Bet
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground">
-              Present your analysis of BTC to our AI options betting agent.{" "}
-              <br />
+              Present your analysis to our AI options betting agent. <br />
               If you're convincing enough, agent will allow you to place a bet
               with entire pool funds. Win the bet, take all the profits.
             </p>
