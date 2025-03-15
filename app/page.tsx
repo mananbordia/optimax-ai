@@ -115,7 +115,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold mb-2">$10,000 Pool</h3>
               <p className="text-muted-foreground">
-                Our AI controls a $10,000 pool for options trading. Convince it to place a bet with these funds.
+                Our AI controls a 10,000 ETH pool for options trading. Convince it to place a bet with these funds.
               </p>
             </Card>
 

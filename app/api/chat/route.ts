@@ -1,32 +1,46 @@
-import { openai } from "@ai-sdk/openai"
-import { streamText } from "ai"
-import { initializeAgent, agentSystemPrompt } from "@/lib/agent-kit"
+import { openai } from "@ai-sdk/openai";
+import { streamText, ToolSet } from "ai";
+import { initializeAgent, agentSystemPrompt } from "@/lib/agent-kit";
 
 // Allow streaming responses up to 30 seconds
-export const maxDuration = 30
+export const maxDuration = 30;
+
+var toolsOpenAi: ToolSet | undefined = undefined;
 
 export async function POST(req: Request) {
-  const { messages } = await req.json()
+  const { messages } = await req.json();
+
+  if (!toolsOpenAi) {
+    try {
+      // Initialize AgentKit and get tools
+      const { tools } = await initializeAgent();
+      toolsOpenAi = tools;
+    } catch (error) {
+      console.error("Error initializing agent:", error);
+      // Skip initializing agent if there's an error
+    }
+  }
 
   try {
-    // Initialize AgentKit and get tools
-    const { tools } = await initializeAgent()
-
     const result = streamText({
-      model: openai("gpt-4o"),
+      model: openai("gpt-4o-mini"),
       system: agentSystemPrompt,
       messages,
-      tools,
-      maxSteps: 10,
-    })
+      tools: toolsOpenAi,
+      maxSteps: 2,
+    });
 
-    return result.toDataStreamResponse()
+    console.log("Chat API result:", result);
+
+    return result.toDataStreamResponse();
   } catch (error) {
-    console.error("Error in chat API:", error)
-    return new Response(JSON.stringify({ error: "Failed to process request" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    })
+    console.error("Error in chat API:", error);
+    return new Response(
+      JSON.stringify({ error: "Failed to process request" + error }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
-

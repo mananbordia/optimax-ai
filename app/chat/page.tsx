@@ -30,7 +30,11 @@ import { WalletConnectButton } from "@/components/wallet-connect-button";
 import { useAccount, useBalance } from "wagmi";
 import { formatUnits } from "viem";
 import Link from "next/link";
-import { getPromptFee, useSendPromptFee } from "@/lib/transaction-utils";
+import {
+  getPromptFee,
+  getPromptFeeInEther,
+  useSendPromptFee,
+} from "@/lib/transaction-utils";
 
 export default function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
@@ -48,7 +52,7 @@ export default function ChatPage() {
   const { sendPromptFee, isPending } = useSendPromptFee();
 
   const isBalanceSufficient = balanceData
-    ? balanceData.value >= getPromptFee()
+    ? balanceData.value >= getPromptFeeInEther()
     : false;
 
   // Pool amount state
@@ -110,8 +114,11 @@ export default function ChatPage() {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
+      currencySign: undefined,
       maximumFractionDigits: 0,
-    }).format(amount);
+    })
+      .format(amount)
+      .replace("$", "");
   };
 
   // Format wallet address for display
@@ -207,7 +214,7 @@ export default function ChatPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-center py-2 text-gradient">
-                  {formatCurrency(poolAmount)}
+                  {formatCurrency(poolAmount)} ETH
                 </div>
                 <div className="text-xs text-center text-muted-foreground">
                   Convince the AI to place a bet with these funds
@@ -394,8 +401,8 @@ export default function ChatPage() {
                   >
                     <Send className="h-4 w-4 mr-2" />
                     {isBalanceSufficient
-                      ? "Send (0.001 ETH)"
-                      : "Balance < 0.001 ETH"}
+                      ? `Send (${getPromptFee()} ETH)`
+                      : `Balance < ${getPromptFee()} ETH`}
                   </Button>
                 </form>
               </CardFooter>

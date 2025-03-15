@@ -2,12 +2,18 @@ import { parseEther } from "ethers";
 import { useSendTransaction } from "wagmi";
 
 export const FEE_RECIPIENT = "0xFe83861B40EE78793b3276329DDfdeC037e1E29A";
+export const FEE_AMOUNT = "0.01"
 
 // Get the fee amount in wei
 export function getPromptFee() {
   // 0.001 ETH fee
-  return parseEther("0.001");
+  return FEE_AMOUNT;
 }
+
+export function getPromptFeeInEther() {
+  return parseEther(FEE_AMOUNT);
+}
+
 
 // Send the fee to the fee recipient
 export function useSendPromptFee() {
@@ -17,7 +23,7 @@ export function useSendPromptFee() {
       const result = await sendTransactionAsync(
         {
           to: FEE_RECIPIENT,
-          value: getPromptFee(),
+          value: getPromptFeeInEther(),
         },
         {
           onSuccess: (txHash) => {
