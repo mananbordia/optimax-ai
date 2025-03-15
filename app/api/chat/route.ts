@@ -11,6 +11,7 @@ export const maxDuration = 30;
 var toolsOpenAi: ToolSet | undefined = undefined;
 
 const MESSAGE_REDIS_KEY = "chat:messages";
+const POOL_FUNDS_REDIS_KEY = "pool:funds";
 
 export async function POST(req: Request) {
   const { message }: { message: Message } = await req.json();
@@ -62,6 +63,8 @@ export async function POST(req: Request) {
           value: JSON.stringify(agentMessage),
         },
       ]);
+
+      await redisClient.INCRBY(POOL_FUNDS_REDIS_KEY, 10)
     } catch (error) {
       console.error("Error saving message to Redis:", error);
     }

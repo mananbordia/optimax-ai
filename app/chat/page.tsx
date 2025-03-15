@@ -23,6 +23,7 @@ import {
 import Image from "next/image";
 import { Navbar } from "@/components/navbar";
 import useChat from "@/hooks/use-chat";
+import usePool from "@/hooks/use-pool";
 
 export default function ChatPage() {
   const {
@@ -53,7 +54,13 @@ export default function ChatPage() {
   }, []);
 
   // Pool amount state
-  const [poolAmount, setPoolAmount] = useState(10000); // $10,000 starting pool
+  const { poolAmount, fetchPoolAmount, isFetching: isFetchingPool } = usePool();
+
+  useEffect(() => {
+    if (!isSending && !isFetchingPool) {
+      fetchPoolAmount();
+    }
+  }, [isSending]);
 
   // Countdown timer state - 1 day in seconds (24 * 60 * 60)
   const ONE_DAY_IN_SECONDS = 86400;
@@ -72,7 +79,10 @@ export default function ChatPage() {
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
     }
   }, [messages]);
 
@@ -137,7 +147,7 @@ export default function ChatPage() {
       style: "currency",
       currency: "USD",
       currencySign: undefined,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 2,
     })
       .format(amount)
       .replace("$", "");
@@ -237,187 +247,189 @@ export default function ChatPage() {
         {/* Main Content */}
         <main
           className={cn(
-            "flex-1 flex flex-col",
+            "flex-1 flex flex-col h-[calc(100vh-57px)]",
             isMobile && sidebarOpen && "opacity-50"
           )}
         >
           <div className="flex-1 overflow-hidden p-4">
-            <Card className="h-full flex flex-col border-2 border-primary/30 shadow-md bg-card/50 backdrop-blur-sm">
-              <CardContent className="flex-1 overflow-y-auto p-4 pt-6">
-                {/* Persistent welcome message */}
-                <div className="mb-6 mr-10 bg-secondary/30 rounded-lg p-4 border-l-4 border-primary sticky top-0 z-10 shadow-md">
-                  <div className="flex items-start gap-4">
-                    <div className="rounded-full p-2 bg-secondary text-secondary-foreground">
-                      <Bot className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium mb-1">
-                        Welcome to Optimax AI
-                      </h3>
-                      <p className="text-sm">
-                        Hello! I'm your AI options betting agent with blockchain
-                        capabilities.
-                      </p>
-                      <br />
-                      <p className="text-sm mt-0">
-                        <strong>
-                          Your challenge: Convince me that you know BTC’s next
-                          move.
-                        </strong>
-                        <br /> If you’re confident, you can place an options bet
-                        using the pool’s funds. Win the bet, and the full
-                        winnings are yours.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  {messages.map((message, index) => (
-                    <div
-                      key={index}
-                      className={`flex ${
-                        message.role === "user"
-                          ? "justify-end"
-                          : "justify-start"
-                      } animate-fade-in`}
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      <div
-                        className={`flex items-start gap-2 max-w-[80%] ${
-                          message.role === "user" ? "flex-row-reverse" : ""
-                        }`}
-                      >
-                        <div
-                          className={`rounded-full p-2 ${
-                            message.role === "user"
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-secondary text-secondary-foreground"
-                          }`}
-                        >
-                          {message.role === "user" ? (
-                            <User className="h-4 w-4" />
-                          ) : (
-                            <Bot className="h-4 w-4" />
-                          )}
-                        </div>
-                        <div
-                          className={`rounded-lg px-4 py-2 ${
-                            message.role === "user"
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-secondary text-secondary-foreground"
-                          } shadow-md`}
-                        >
-                          {message.content}
-                        </div>
+            <div className="flex flex-col h-full">
+              <Card className="flex-1 flex flex-col border-2 border-primary/30 shadow-md bg-card/50 backdrop-blur-sm overflow-hidden">
+                <CardContent className="flex-1 overflow-y-auto p-4 pt-6 h-[calc(100vh-280px)]">
+                  {/* Persistent welcome message */}
+                  <div className="mb-6 mr-10 bg-secondary rounded-lg p-4 border-l-4 border-primary sticky top-0 z-10 shadow-md">
+                    <div className="flex items-start gap-4">
+                      <div className="rounded-full p-2 bg-secondary text-secondary-foreground">
+                        <Bot className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium mb-1">
+                          Welcome to Optimax AI
+                        </h3>
+                        <p className="text-sm">
+                          Hello! I'm your AI options betting agent with
+                          blockchain capabilities.
+                        </p>
+                        <br />
+                        <p className="text-sm mt-0">
+                          <strong>
+                            Your challenge: Convince me that you know BTC’s next
+                            move.
+                          </strong>
+                          <br /> If you’re confident, you can place an options
+                          bet using the pool’s funds. Win the bet, and the full
+                          winnings are yours.
+                        </p>
                       </div>
                     </div>
-                  ))}
-                  {isSending && (
-                    <div className="flex justify-start animate-fade-in">
-                      <div className="flex items-start gap-2 max-w-[80%]">
-                        <div className="rounded-full p-2 bg-secondary text-secondary-foreground">
-                          <Bot className="h-4 w-4" />
-                        </div>
-                        <div className="rounded-lg px-4 py-2 bg-secondary text-secondary-foreground shadow-md">
-                          <div className="flex gap-1">
-                            <div className="h-2 w-2 rounded-full bg-current animate-bounce" />
-                            <div
-                              className="h-2 w-2 rounded-full bg-current animate-bounce"
-                              style={{ animationDelay: "0.2s" }}
-                            />
-                            <div
-                              className="h-2 w-2 rounded-full bg-current animate-bounce"
-                              style={{ animationDelay: "0.4s" }}
-                            />
+                  </div>
+
+                  <div className="space-y-4">
+                    {messages.map((message, index) => (
+                      <div
+                        key={index}
+                        className={`flex ${
+                          message.role === "user"
+                            ? "justify-end"
+                            : "justify-start"
+                        } animate-fade-in`}
+                        style={{ animationDelay: `${index * 100}ms` }}
+                      >
+                        <div
+                          className={`flex items-start gap-2 max-w-[80%] ${
+                            message.role === "user" ? "flex-row-reverse" : ""
+                          }`}
+                        >
+                          <div
+                            className={`rounded-full p-2 ${
+                              message.role === "user"
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-secondary text-secondary-foreground"
+                            }`}
+                          >
+                            {message.role === "user" ? (
+                              <User className="h-4 w-4" />
+                            ) : (
+                              <Bot className="h-4 w-4" />
+                            )}
+                          </div>
+                          <div
+                            className={`rounded-lg px-4 py-2 ${
+                              message.role === "user"
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-secondary text-secondary-foreground"
+                            } shadow-md`}
+                          >
+                            {message.content}
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
-              </CardContent>
+                    ))}
+                    {isSending && (
+                      <div className="flex justify-start animate-fade-in">
+                        <div className="flex items-start gap-2 max-w-[80%]">
+                          <div className="rounded-full p-2 bg-secondary text-secondary-foreground">
+                            <Bot className="h-4 w-4" />
+                          </div>
+                          <div className="rounded-lg px-4 py-2 bg-secondary text-secondary-foreground shadow-md">
+                            <div className="flex gap-1">
+                              <div className="h-2 w-2 rounded-full bg-current animate-bounce" />
+                              <div
+                                className="h-2 w-2 rounded-full bg-current animate-bounce"
+                                style={{ animationDelay: "0.2s" }}
+                              />
+                              <div
+                                className="h-2 w-2 rounded-full bg-current animate-bounce"
+                                style={{ animationDelay: "0.4s" }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={messagesEndRef} />
+                  </div>
+                </CardContent>
 
-              <CardFooter className="border-t border-border/30 p-4 bg-card/80">
-                <form
-                  onSubmit={payAndSendMessage}
-                  className="flex w-full gap-2"
-                >
-                  <Input
-                    ref={inputRef}
-                    onChange={handleInputChange}
-                    value={input}
-                    placeholder={
-                      timeRemaining === 0
-                        ? "Time's up! No more submissions."
-                        : "Make your case for an options bet on BTC"
-                    }
-                    className="flex-1 bg-background/50 border-border/50 focus:ring-2 focus:ring-primary/50 transition-all duration-300"
-                    disabled={isFetching || isSending || timeRemaining === 0}
-                    maxLength={300}
-                  />
-                  <Button
-                    type="submit"
-                    disabled={
-                      isFetching ||
-                      isSending ||
-                      !input.trim() ||
-                      timeRemaining === 0 ||
-                      !isBalanceSufficient ||
-                      isPending
-                    }
-                    className="bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-600 text-primary-foreground transition-all duration-300 hover:scale-105 shadow-md"
+                <CardFooter className="border-t border-border/30 p-4 bg-card/80">
+                  <form
+                    onSubmit={payAndSendMessage}
+                    className="flex w-full gap-2"
                   >
-                    <Send className="h-4 w-4 mr-2" />
-                    {isBalanceSufficient
-                      ? `Send (${getPromptFee()} ETH)`
-                      : `Balance < ${getPromptFee()} ETH`}
-                  </Button>
-                </form>
-              </CardFooter>
-            </Card>
-          </div>
-          {/* Powered by section */}
-          <div className="p-4 flex-row flex gap-3 justify-end items-center">
-            <div className="flex justify-center items-center text-sm font-medium text-muted-foreground">
-              Powered by
+                    <Input
+                      ref={inputRef}
+                      onChange={handleInputChange}
+                      value={input}
+                      placeholder={
+                        timeRemaining === 0
+                          ? "Time's up! No more submissions."
+                          : "Make your case for an options bet on BTC"
+                      }
+                      className="flex-1 bg-background/50 border-border/50 focus:ring-2 focus:ring-primary/50 transition-all duration-300"
+                      disabled={isFetching || isSending || timeRemaining === 0}
+                      maxLength={300}
+                    />
+                    <Button
+                      type="submit"
+                      disabled={
+                        isFetching ||
+                        isSending ||
+                        !input.trim() ||
+                        timeRemaining === 0 ||
+                        !isBalanceSufficient ||
+                        isPending
+                      }
+                      className="bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-600 text-primary-foreground transition-all duration-300 hover:scale-105 shadow-md"
+                    >
+                      <Send className="h-4 w-4 mr-2" />
+                      {isBalanceSufficient
+                        ? `Send (${getPromptFee()} ETH)`
+                        : `Balance < ${getPromptFee()} ETH`}
+                    </Button>
+                  </form>
+                </CardFooter>
+              </Card>
             </div>
-            <div className="flex flex-wrap justify-center items-center">
-              <div className="flex items-center justify-center z-10">
-                <Image
-                  src="/logos/coinbase.svg"
-                  alt="Coinbase"
-                  width={35}
-                  height={35}
-                />
+            {/* Powered by section */}
+            <div className="p-4 flex-row flex gap-3 justify-end items-center">
+              <div className="flex justify-center items-center text-sm font-medium text-muted-foreground">
+                Powered by
               </div>
-              <div className="flex items-center justify-center h-8 z-9">
-                <Image
-                  src="/logos/logx.svg"
-                  alt="LogX"
-                  width={35}
-                  height={35}
-                  className="ml-[-10px]"
-                />
-              </div>
-              <div className="flex items-center justify-center h-8 z-8">
-                <Image
-                  src="/logos/zetachain.svg"
-                  alt="Zetachain"
-                  width={35}
-                  height={35}
-                  className="ml-[-10px]"
-                />
-              </div>
-              <div className="flex items-center justify-center h-8 z-5">
-                <Image
-                  src="/logos/base.svg"
-                  alt="Base"
-                  width={35}
-                  height={35}
-                  className="ml-[-10px]"
-                />
+              <div className="flex flex-wrap justify-center items-center">
+                <div className="flex items-center justify-center z-10">
+                  <Image
+                    src="/logos/coinbase.svg"
+                    alt="Coinbase"
+                    width={35}
+                    height={35}
+                  />
+                </div>
+                <div className="flex items-center justify-center h-8 z-9">
+                  <Image
+                    src="/logos/logx.svg"
+                    alt="LogX"
+                    width={35}
+                    height={35}
+                    className="ml-[-10px]"
+                  />
+                </div>
+                <div className="flex items-center justify-center h-8 z-8">
+                  <Image
+                    src="/logos/zetachain.svg"
+                    alt="Zetachain"
+                    width={35}
+                    height={35}
+                    className="ml-[-10px]"
+                  />
+                </div>
+                <div className="flex items-center justify-center h-8 z-5">
+                  <Image
+                    src="/logos/base.svg"
+                    alt="Base"
+                    width={35}
+                    height={35}
+                    className="ml-[-10px]"
+                  />
+                </div>
               </div>
             </div>
           </div>
