@@ -286,8 +286,8 @@ export default function ChatPage() {
             <Card className="h-full flex flex-col border-2 border-primary/30 shadow-md bg-card/50 backdrop-blur-sm">
               <CardContent className="flex-1 overflow-y-auto p-4 pt-6">
                 {/* Persistent welcome message */}
-                <div className="mb-6 bg-secondary/30 rounded-lg p-4 border-l-4 border-primary sticky top-0 z-10 shadow-md">
-                  <div className="flex items-start gap-3">
+                <div className="mb-6 mr-10 bg-secondary/30 rounded-lg p-4 border-l-4 border-primary sticky top-0 z-10 shadow-md">
+                  <div className="flex items-start gap-4">
                     <div className="rounded-full p-2 bg-secondary text-secondary-foreground">
                       <Bot className="h-5 w-5" />
                     </div>
@@ -297,9 +297,17 @@ export default function ChatPage() {
                       </h3>
                       <p className="text-sm">
                         Hello! I'm your AI options betting assistant with
-                        blockchain capabilities. You need to convince me to
-                        place an options bet with the pool funds. If the bet
-                        wins, all winnings go to you.
+                        blockchain capabilities.
+                      </p>
+                      <br />
+                      <p className="text-sm mt-0">
+                        <strong>
+                          Your challenge: Convince me that you know BTC’s next
+                          move.
+                        </strong>
+                        <br /> If you’re confident, you can place an options bet
+                        using the pool’s funds. Win the bet, and the full
+                        winnings are yours.
                       </p>
                     </div>
                   </div>
@@ -383,7 +391,7 @@ export default function ChatPage() {
                     placeholder={
                       timeRemaining === 0
                         ? "Time's up! No more submissions."
-                        : "Make your case for an options bet or ask about blockchain..."
+                        : "Make your case for an options bet on BTC"
                     }
                     className="flex-1 bg-background/50 border-border/50 focus:ring-2 focus:ring-primary/50 transition-all duration-300"
                     disabled={isLoading || timeRemaining === 0}
