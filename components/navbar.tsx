@@ -38,12 +38,14 @@ export function Navbar() {
       path: "/perpmax",
       description: "Gain access for 20x leverage perpetual trading",
       isActive: false,
+      tag: "Soon"
     },
     {
       name: "Spotmax AI",
       path: "/spotmax",
       description: "Convince AI agent and use pool for spot trading",
       isActive: false,
+      tag: "Q2 2025"
     },
     {
       name: "Premax AI",
@@ -51,6 +53,7 @@ export function Navbar() {
       description:
         "Beat Pre-market AI agent and predict on unlaunched tokens",
       isActive: false,
+      tag: "Q3 2025"
     },
     {
       name: "Arbimax AI",
@@ -58,6 +61,7 @@ export function Navbar() {
       description:
         "AI Arbitrage agent that autonomously works across multiple chains to extract max value",
       isActive: false,
+      tag: "Q1 2026"
     },
   ];
 
@@ -96,7 +100,7 @@ export function Navbar() {
                         <div className="relative px-3 py-2 text-sm font-medium rounded-md text-muted-foreground cursor-not-allowed">
                           {product.name}
                           <span className="absolute -bottom-1 -right-2 text-xs px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-medium inline-flex items-center justify-center leading-none ">
-                            Soon
+                            {product.tag}
                           </span>
                         </div>
                       )}

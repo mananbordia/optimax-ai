@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Optimax AI",
   description: "Convince the AI to place options bets and win",
-    generator: 'v0.dev'
+  icons: ["/favicon.ico"],
 }
 
 export default function RootLayout({
