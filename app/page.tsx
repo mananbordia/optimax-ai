@@ -16,6 +16,7 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { WalletConnectButton } from "@/components/wallet-connect-button";
 import { Sun, Moon } from "lucide-react";
+import Image from "next/image";
 
 export default function LandingPage() {
   const { theme, setTheme } = useTheme();
@@ -56,13 +57,15 @@ export default function LandingPage() {
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
           <div className="flex-1 space-y-6">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-              <span className="text-gradient">Convince the AI</span><br/>to Place
-              Your Bet
+              <span className="text-gradient">Convince the AI</span>
+              <br />
+              to Place Your Bet
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground">
-              Present your analysis of BTC to our AI options betting agent. <br/>
-              If you're convincing enough, agent will allow you to place a bet with entire pool funds.
-              Win the bet, take all the profits.
+              Present your analysis of BTC to our AI options betting agent.{" "}
+              <br />
+              If you're convincing enough, agent will allow you to place a bet
+              with entire pool funds. Win the bet, take all the profits.
             </p>
             <div className="pt-4">
               <Link href="/chat">
@@ -93,8 +96,8 @@ export default function LandingPage() {
                       <Bot className="h-5 w-5" />
                     </div>
                     <div className="rounded-lg px-4 py-2 bg-secondary text-secondary-foreground shadow-md">
-                      Convince me why you should place an options bet on BTC with
-                      our 10,000 ETH pool. What's your analysis?
+                      Convince me why you should place an options bet on BTC
+                      with our 10,000 ETH pool. What's your analysis?
                     </div>
                   </div>
                   <div className="flex justify-end">
@@ -115,6 +118,64 @@ export default function LandingPage() {
               <div className="absolute -top-4 -right-4 bg-green-500 text-white rounded-full px-3 py-1 text-sm font-bold shadow-lg">
                 24h Challenge
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Partners Marquee Section */}
+      <section className="py-8 bg-muted/20">
+        <div className="container mx-auto px-4">
+          <h3 className="text-center text-lg font-medium mb-6">Powered by</h3>
+          <div className="overflow-hidden">
+            <div className="flex animate-marquee">
+              {[...Array(2)].map((_, outerIndex) => (
+                <div
+                  key={outerIndex}
+                  className="flex min-w-full justify-around"
+                >
+                  <Card className="mx-4 p-4 border border-border/30 shadow-sm">
+                    <div className="flex items-center justify-center h-8">
+                      <Image
+                        src="/logos/coinbase.svg"
+                        alt="Coinbase"
+                        width={120}
+                        height={28}
+                      />
+                    </div>
+                  </Card>
+                  <Card className="mx-4 p-4 border border-border/30 shadow-sm">
+                    <div className="flex items-center justify-center h-8">
+                      <Image
+                        src="/logos/logx.svg"
+                        alt="LogX"
+                        width={80}
+                        height={28}
+                      />
+                    </div>
+                  </Card>
+                  <Card className="mx-4 p-4 border border-border/30 shadow-sm">
+                    <div className="flex items-center justify-center h-8">
+                      <Image
+                        src="/logos/zetachain.svg"
+                        alt="Zetachain"
+                        width={100}
+                        height={28}
+                      />
+                    </div>
+                  </Card>
+                  <Card className="mx-4 p-4 border border-border/30 shadow-sm">
+                    <div className="flex items-center justify-center h-8">
+                      <Image
+                        src="/logos/base.svg"
+                        alt="Base"
+                        width={80}
+                        height={28}
+                      />
+                    </div>
+                  </Card>
+                </div>
+              ))}
             </div>
           </div>
         </div>

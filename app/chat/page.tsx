@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "ai/react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,6 +35,7 @@ import {
   getPromptFeeInEther,
   useSendPromptFee,
 } from "@/lib/transaction-utils";
+import Image from "next/image";
 
 export default function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
@@ -51,16 +52,27 @@ export default function ChatPage() {
   });
   const { sendPromptFee, isPending } = useSendPromptFee();
 
-  const isBalanceSufficient = balanceData
-    ? balanceData.value >= getPromptFeeInEther()
-    : false;
+  const isBalanceSufficient = useMemo(
+    () => (balanceData ? balanceData.value >= getPromptFeeInEther() : false),
+    [balanceData]
+  );
 
   // Pool amount state
   const [poolAmount, setPoolAmount] = useState(10000); // $10,000 starting pool
 
   // Countdown timer state - 1 day in seconds (24 * 60 * 60)
   const ONE_DAY_IN_SECONDS = 86400;
-  const [timeRemaining, setTimeRemaining] = useState(ONE_DAY_IN_SECONDS);
+  const getSecondsUntilMidnightUTC = () => {
+    const now = new Date();
+    const midnightUTC = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)
+    );
+    return Math.floor((midnightUTC.getTime() - now.getTime()) / 1000);
+  };
+
+  const [timeRemaining, setTimeRemaining] = useState(
+    getSecondsUntilMidnightUTC()
+  );
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -83,17 +95,28 @@ export default function ChatPage() {
     return () => clearInterval(interval);
   }, []);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   // Format remaining time as HH:MM:SS
   const formatTime = (seconds: number) => {
+    if (seconds < 60) {
+      return `${seconds} secs`;
+    }
+
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
 
-    return [
-      hours.toString().padStart(2, "0"),
-      minutes.toString().padStart(2, "0"),
-      secs.toString().padStart(2, "0"),
-    ].join(":");
+    if (hours > 0) {
+      return `${hours} hr ${minutes} mins`;
+    }
+
+    return `${minutes} mins`;
   };
 
   // Calculate progress percentage
@@ -103,10 +126,10 @@ export default function ChatPage() {
 
   const payAndSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // if (!isBalanceSufficient) return;
-    // if (await sendPromptFee()) {
-    handleSubmit(e);
-    // }
+    if (!isBalanceSufficient) return;
+    if (await sendPromptFee()) {
+      handleSubmit(e);
+    }
   };
 
   // Format currency
@@ -217,7 +240,7 @@ export default function ChatPage() {
                   {formatCurrency(poolAmount)} ETH
                 </div>
                 <div className="text-xs text-center text-muted-foreground">
-                  Convince the AI to place a bet with these funds
+                  Convince the AI to place a bet
                 </div>
               </CardContent>
             </Card>
@@ -242,7 +265,9 @@ export default function ChatPage() {
                     style={{ width: `${calculateProgress()}%` }}
                   />
                 </div>
-
+                <div className="mt-4 text-xs text-center text-muted-foreground">
+                  AI will return funds after deadline
+                </div>
                 {timeRemaining === 0 && (
                   <div className="mt-3 text-center text-sm text-destructive font-medium">
                     Time's up!
@@ -262,8 +287,8 @@ export default function ChatPage() {
               <CardContent>
                 <div className="text-xs text-muted-foreground space-y-2">
                   <p>
-                    This AI assistant can interact with blockchain using
-                    Coinbase AgentKit.
+                    This AI assistant can interact with blockchain and collect
+                    on-chain data using Coinbase AgentKit.
                   </p>
                 </div>
               </CardContent>
@@ -271,7 +296,7 @@ export default function ChatPage() {
           </div>
 
           <div className="mt-auto p-4 text-xs text-muted-foreground border-t border-border/30">
-            © 2025 Optimax AI
+            © 2025 Optimax AI | Made with ❤️
           </div>
         </aside>
 
@@ -296,8 +321,8 @@ export default function ChatPage() {
                         Welcome to Optimax AI
                       </h3>
                       <p className="text-sm">
-                        Hello! I'm your AI options betting assistant with
-                        blockchain capabilities.
+                        Hello! I'm your AI options betting agent with blockchain
+                        capabilities.
                       </p>
                       <br />
                       <p className="text-sm mt-0">
@@ -386,6 +411,7 @@ export default function ChatPage() {
                   className="flex w-full gap-2"
                 >
                   <Input
+                    ref={inputRef}
                     value={input}
                     onChange={handleInputChange}
                     placeholder={
@@ -395,6 +421,7 @@ export default function ChatPage() {
                     }
                     className="flex-1 bg-background/50 border-border/50 focus:ring-2 focus:ring-primary/50 transition-all duration-300"
                     disabled={isLoading || timeRemaining === 0}
+                    maxLength={400}
                   />
                   <Button
                     type="submit"
@@ -415,6 +442,49 @@ export default function ChatPage() {
                 </form>
               </CardFooter>
             </Card>
+          </div>
+          {/* Powered by section */}
+          <div className="p-4 flex-row flex gap-6 justify-end items-center">
+            <div className="flex justify-center items-center text-sm font-medium text-muted-foreground">
+              Powered by
+            </div>
+            <div className="flex flex-wrap justify-center items-center">
+              <div className="flex items-center justify-center">
+                <Image
+                  src="/logos/coinbase.svg"
+                  alt="Coinbase"
+                  width={40}
+                  height={40}
+                />
+              </div>
+              <div className="flex items-center justify-center h-8">
+                <Image
+                  src="/logos/logx.svg"
+                  alt="LogX"
+                  width={40}
+                  height={40}
+                  className="ml-[-10px]"
+                />
+              </div>
+              <div className="flex items-center justify-center h-8">
+                <Image
+                  src="/logos/zetachain.svg"
+                  alt="Zetachain"
+                  width={40}
+                  height={40}
+                  className="ml-[-10px]"
+                />
+              </div>
+              <div className="flex items-center justify-center h-8">
+                <Image
+                  src="/logos/base.svg"
+                  alt="Base"
+                  width={40}
+                  height={40}
+                  className="ml-[-10px]"
+                />
+              </div>
+            </div>
           </div>
         </main>
       </div>
