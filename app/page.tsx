@@ -17,6 +17,7 @@ import Link from "next/link";
 import { WalletConnectButton } from "@/components/wallet-connect-button";
 import { Sun, Moon } from "lucide-react";
 import Image from "next/image";
+import { POWERED_BY_CONFIG } from "@/lib/constants";
 
 export default function LandingPage() {
   const { theme, setTheme } = useTheme();
@@ -134,50 +135,27 @@ export default function LandingPage() {
                   key={outerIndex}
                   className="flex min-w-full justify-around"
                 >
-                  <Card className="p-4 border-2 border-primary/30 shadow-sm flex flex-row gap-3">
-                    <div className="flex items-center justify-center h-8">
-                      <Image
-                        src="/logos/coinbase.svg"
-                        alt="Coinbase"
-                        width={40}
-                        height={40}
-                      />
-                    </div>
-                    Coinbase
-                  </Card>
-                  <Card className="p-4 border-2 border-primary/30 shadow-sm flex flex-row gap-3">
-                    <div className="flex items-center justify-center h-8">
-                      <Image
-                        src="/logos/logx.svg"
-                        alt="LogX"
-                        width={40}
-                        height={40}
-                      />
-                    </div>
-                    LogX
-                  </Card>
-                  <Card className="p-4 border-2 border-primary/30 shadow-sm flex flex-row gap-3">
-                    <div className="flex items-center justify-center h-8">
-                      <Image
-                        src="/logos/zetachain.svg"
-                        alt="Zetachain"
-                        width={40}
-                        height={40}
-                      />
-                    </div>
-                    Zetachain
-                  </Card>
-                  <Card className="p-4 border-2 border-primary/30 shadow-sm flex flex-row gap-3">
-                    <div className="flex items-center justify-center h-8">
-                      <Image
-                        src="/logos/base.svg"
-                        alt="Base"
-                        width={40}
-                        height={40}
-                      />
-                    </div>
-                    Base
-                  </Card>
+                  {POWERED_BY_CONFIG.map((partner, index) => (
+                    <Card
+                      key={index}
+                      className="p-4 pt-1 border-2 border-primary/30 shadow-sm flex flex-col gap-2"
+                    >
+                      <div className="text-xs text-center text-muted-foreground">
+                        {partner.subtext}
+                      </div>
+                      <div className="flex items-center justify-center gap-3">
+                        <div className="flex items-center justify-center h-8">
+                          <Image
+                            src={partner.logo}
+                            alt={partner.name}
+                            width={40}
+                            height={40}
+                          />
+                        </div>
+                        {partner.name}
+                      </div>
+                    </Card>
+                  ))}
                 </div>
               ))}
             </div>
