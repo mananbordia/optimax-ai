@@ -30,11 +30,12 @@ import { WalletConnectButton } from "@/components/wallet-connect-button";
 import { useAccount, useBalance } from "wagmi";
 import { formatUnits } from "viem";
 import Link from "next/link";
+import { getPromptFee, useSendPromptFee } from "@/lib/transaction-utils";
 
 export default function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({
-      initialMessages: [], // Remove the welcome message since it's now persistent at the top
+      initialMessages: [],
     });
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
@@ -44,6 +45,11 @@ export default function ChatPage() {
   const { data: balanceData } = useBalance({
     address,
   });
+  const { sendPromptFee, isPending } = useSendPromptFee();
+
+  const isBalanceSufficient = balanceData
+    ? balanceData.value >= getPromptFee()
+    : false;
 
   // Pool amount state
   const [poolAmount, setPoolAmount] = useState(10000); // $10,000 starting pool
@@ -89,6 +95,14 @@ export default function ChatPage() {
   // Calculate progress percentage
   const calculateProgress = () => {
     return ((ONE_DAY_IN_SECONDS - timeRemaining) / ONE_DAY_IN_SECONDS) * 100;
+  };
+
+  const payAndSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // if (!isBalanceSufficient) return;
+    // if (await sendPromptFee()) {
+    handleSubmit(e);
+    // }
   };
 
   // Format currency
@@ -278,8 +292,7 @@ export default function ChatPage() {
                         Hello! I'm your AI options betting assistant with
                         blockchain capabilities. You need to convince me to
                         place an options bet with the pool funds. If the bet
-                        wins, all winnings go to you. You can also ask me to
-                        perform blockchain operations using Coinbase AgentKit.
+                        wins, all winnings go to you.
                       </p>
                     </div>
                   </div>
@@ -353,7 +366,10 @@ export default function ChatPage() {
               </CardContent>
 
               <CardFooter className="border-t border-border/30 p-4 bg-card/80">
-                <form onSubmit={handleSubmit} className="flex w-full gap-2">
+                <form
+                  onSubmit={payAndSendMessage}
+                  className="flex w-full gap-2"
+                >
                   <Input
                     value={input}
                     onChange={handleInputChange}
@@ -367,11 +383,19 @@ export default function ChatPage() {
                   />
                   <Button
                     type="submit"
-                    disabled={isLoading || !input.trim() || timeRemaining === 0}
+                    disabled={
+                      isLoading ||
+                      !input.trim() ||
+                      timeRemaining === 0 ||
+                      !isBalanceSufficient ||
+                      isPending
+                    }
                     className="bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-600 text-primary-foreground transition-all duration-300 hover:scale-105 shadow-md"
                   >
                     <Send className="h-4 w-4 mr-2" />
-                    Send
+                    {isBalanceSufficient
+                      ? "Send (0.001 ETH)"
+                      : "Balance < 0.001 ETH"}
                   </Button>
                 </form>
               </CardFooter>
