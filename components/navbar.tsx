@@ -33,13 +33,19 @@ export function Navbar() {
     {
       name: "Spotmax AI",
       path: "/spotmax",
-      description: "Convince AI agent for spot trading",
+      description: "Convince AI agent and use pool for spot trading",
       isActive: false,
     },
     {
       name: "Premax AI",
       path: "/premax",
       description: "Bypass Pre-market AI inspector and predict on unlaunched tokens",
+      isActive: false,
+    },
+    {
+      name: "Arbimax AI",
+      path: "/artimax",
+      description: "AI Arbitrage agent that autonomously works across multiple chains to extract max value",
       isActive: false,
     },
   ];
