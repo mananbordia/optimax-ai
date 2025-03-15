@@ -26,16 +26,14 @@ import {
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
-import { WalletConnectButton } from "@/components/wallet-connect-button";
 import { useAccount, useBalance } from "wagmi";
-import { formatUnits } from "viem";
-import Link from "next/link";
 import {
   getPromptFee,
   getPromptFeeInEther,
   useSendPromptFee,
 } from "@/lib/transaction-utils";
 import Image from "next/image";
+import { Navbar } from "@/components/navbar";
 
 export default function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
@@ -152,72 +150,7 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300 flex flex-col">
-      <header className="border-b border-border/30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          {isMobile && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              aria-label="Toggle sidebar"
-              className="hover:scale-110 transition-transform duration-200"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-menu"
-              >
-                <line x1="4" x2="20" y1="12" y2="12" />
-                <line x1="4" x2="20" y1="6" y2="6" />
-                <line x1="4" x2="20" y1="18" y2="18" />
-              </svg>
-            </Button>
-          )}
-          <Link href="/" className="hover:opacity-80 transition-opacity">
-            <h1 className="text-xl font-bold flex items-center gap-2">
-              <div className="relative">
-                <BarChart3 className="h-6 w-6 text-primary animate-float" />
-                <TrendingUp className="h-4 w-4 text-green-500 absolute -top-1 -right-1" />
-              </div>
-              <span className="text-gradient-animated">Optimax AI</span>
-            </h1>
-          </Link>
-
-          <div className="flex items-center gap-4">
-            {isConnected && balanceData && (
-              <div className="text-base font-medium hidden md:block">
-                <span className="text-muted-foreground mr-2">Balance:</span>
-                <span className="text-gradient">
-                  {Number.parseFloat(
-                    formatUnits(balanceData.value, balanceData.decimals)
-                  ).toFixed(4)}{" "}
-                  {balanceData.symbol}
-                </span>
-              </div>
-            )}
-            <WalletConnectButton />
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label="Toggle theme"
-              className="text-foreground hover:scale-110 transition-transform duration-200"
-            >
-              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </Button>
-          </div>
-        </div>
-      </header>
-
+      <Navbar />
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar */}
         <aside

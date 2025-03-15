@@ -18,6 +18,7 @@ import { WalletConnectButton } from "@/components/wallet-connect-button";
 import { Sun, Moon } from "lucide-react";
 import Image from "next/image";
 import { POWERED_BY_CONFIG } from "@/lib/constants";
+import { Navbar } from "@/components/navbar";
 
 export default function LandingPage() {
   const { theme, setTheme } = useTheme();
@@ -25,34 +26,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border/30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <h1 className="text-xl font-bold flex items-center gap-2">
-            <div className="relative">
-              <BarChart3 className="h-6 w-6 text-primary animate-float mt-2" />
-              <TrendingUp className="h-4 w-4 text-green-500 absolute top-2 -right-1" />
-            </div>
-            <span className="text-gradient-animated">Optimax AI</span>
-          </h1>
-
-          <div className="flex items-center gap-2">
-            <WalletConnectButton />
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label="Toggle theme"
-              className="text-foreground hover:scale-110 transition-transform duration-200"
-            >
-              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </Button>
-          </div>
-        </div>
-      </header>
-
+      {/* Navbar */}
+      <Navbar />
       {/* Hero Section */}
       <section className="py-16 md:py-24 container mx-auto px-20">
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
