@@ -30,8 +30,8 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <h1 className="text-xl font-bold flex items-center gap-2">
             <div className="relative">
-              <BarChart3 className="h-6 w-6 text-primary animate-float" />
-              <TrendingUp className="h-4 w-4 text-green-500 absolute -top-1 -right-1" />
+              <BarChart3 className="h-6 w-6 text-primary animate-float mt-2" />
+              <TrendingUp className="h-4 w-4 text-green-500 absolute top-2 -right-1" />
             </div>
             <span className="text-gradient-animated">Optimax AI</span>
           </h1>
