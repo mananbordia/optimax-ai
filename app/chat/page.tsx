@@ -38,7 +38,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isMobile = useMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const { data: balanceData } = useBalance({
     address,
   });
@@ -156,7 +156,7 @@ export default function ChatPage() {
   // Format wallet address for display
   const truncateAddress = (address: string | undefined) => {
     if (!address) return "";
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    return `${address.slice(0, 4)}...${address.slice(-3)}`;
   };
 
   return (
@@ -299,17 +299,25 @@ export default function ChatPage() {
                             message.role === "user" ? "flex-row-reverse" : ""
                           }`}
                         >
-                          <div
-                            className={`rounded-full p-2 ${
-                              message.role === "user"
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-secondary text-secondary-foreground"
-                            }`}
-                          >
-                            {message.role === "user" ? (
-                              <User className="h-4 w-4" />
-                            ) : (
-                              <Bot className="h-4 w-4" />
+                          <div className="flex flex-col items-start gap-2">
+                            <div
+                              className={`rounded-full p-2 ${
+                                message.role === "user"
+                                  ? "bg-primary text-primary-foreground"
+                                  : "bg-secondary text-secondary-foreground"
+                              }`}
+                            >
+                              {message.role === "user" ? (
+                                <User className="h-4 w-4" />
+                              ) : (
+                                <Bot className="h-4 w-4" />
+                              )}
+                            </div>
+                            {!!message.address && (
+                              <div className="text-xs">
+                                {" "}
+                                {truncateAddress(message.address)}{" "}
+                              </div>
                             )}
                           </div>
                           <div
