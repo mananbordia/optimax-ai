@@ -13,7 +13,7 @@ export default function useChat() {
   const [isFetching, setIsFetching] = useState(false);
   const [input, setInput] = useState(""); // Store input value
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
   };
 

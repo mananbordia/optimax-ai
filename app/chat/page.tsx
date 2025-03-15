@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
@@ -100,13 +100,27 @@ export default function ChatPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Auto-resize textarea based on content
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
+    if (textareaRef.current) {
+      // Reset height to auto to get the correct scrollHeight
+      textareaRef.current.style.height = "auto";
+      // Set the height to scrollHeight to fit the content
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, []);
+  }, [input]);
+
+  // Handle key press in textarea
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (input.trim()) {
+        payAndSendMessage(e as unknown as React.FormEvent<HTMLFormElement>);
+      }
+    }
+  };
 
   // Format remaining time as HH:MM:SS
   const formatTime = (seconds: number) => {
@@ -325,7 +339,7 @@ export default function ChatPage() {
                               message.role === "user"
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-secondary text-secondary-foreground"
-                            } shadow-md`}
+                            } shadow-md whitespace-pre-wrap`}
                           >
                             {message.content}
                           </div>
@@ -363,18 +377,21 @@ export default function ChatPage() {
                     onSubmit={payAndSendMessage}
                     className="flex w-full gap-2"
                   >
-                    <Input
-                      ref={inputRef}
+                    <Textarea
+                      autoFocus={true}
+                      ref={textareaRef}
                       onChange={handleInputChange}
+                      onKeyDown={handleKeyDown}
                       value={input}
                       placeholder={
                         timeRemaining === 0
                           ? "Time's up! No more submissions."
                           : "Make your case for an options bet on BTC"
                       }
-                      className="flex-1 bg-background/50 border-border/50 focus:ring-2 focus:ring-primary/50 transition-all duration-300"
+                      className="flex-1 min-h-[40px] max-h-[200px] bg-background/50 border-border/50 focus:ring-2 focus:ring-primary/50 transition-all duration-300 resize-none"
                       disabled={isFetching || isSending || timeRemaining === 0}
-                      maxLength={300}
+                      maxLength={500}
+                      rows={1}
                     />
                     <Button
                       type="submit"
