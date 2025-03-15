@@ -12,16 +12,12 @@ import {
   Bot,
   Shield,
 } from "lucide-react";
-import { useTheme } from "next-themes";
 import Link from "next/link";
-import { WalletConnectButton } from "@/components/wallet-connect-button";
-import { Sun, Moon } from "lucide-react";
 import Image from "next/image";
 import { POWERED_BY_CONFIG } from "@/lib/constants";
 import { Navbar } from "@/components/navbar";
 
 export default function LandingPage() {
-  const { theme, setTheme } = useTheme();
   const [isHovering, setIsHovering] = useState(false);
 
   return (
