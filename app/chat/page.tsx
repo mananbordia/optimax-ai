@@ -142,7 +142,7 @@ export default function ChatPage() {
                 <BarChart3 className="h-6 w-6 text-primary animate-float" />
                 <TrendingUp className="h-4 w-4 text-green-500 absolute -top-1 -right-1" />
               </div>
-              <span className="text-gradient-animated">AI Options Betting</span>
+              <span className="text-gradient-animated">Optimax AI</span>
             </h1>
           </Link>
 
