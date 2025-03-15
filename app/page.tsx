@@ -124,55 +124,59 @@ export default function LandingPage() {
       </section>
 
       {/* Partners Marquee Section */}
-      <section className="py-8 bg-muted/20">
+      <section className="py-6 bg-muted/20">
         <div className="container mx-auto px-4">
-          <h3 className="text-center text-lg font-medium mb-6">Powered by</h3>
+          <h2 className="text-2xl font-bold text-center mb-12">Powered By</h2>
           <div className="overflow-hidden">
-            <div className="flex animate-marquee">
+            <div className="flex animate-marquee text-xl font-bold">
               {[...Array(2)].map((_, outerIndex) => (
                 <div
                   key={outerIndex}
                   className="flex min-w-full justify-around"
                 >
-                  <Card className="mx-4 p-4 border border-border/30 shadow-sm">
+                  <Card className="p-4 border-2 border-primary/30 shadow-sm flex flex-row gap-3">
                     <div className="flex items-center justify-center h-8">
                       <Image
                         src="/logos/coinbase.svg"
                         alt="Coinbase"
-                        width={120}
-                        height={28}
+                        width={40}
+                        height={40}
                       />
                     </div>
+                    Coinbase
                   </Card>
-                  <Card className="mx-4 p-4 border border-border/30 shadow-sm">
+                  <Card className="p-4 border-2 border-primary/30 shadow-sm flex flex-row gap-3">
                     <div className="flex items-center justify-center h-8">
                       <Image
                         src="/logos/logx.svg"
                         alt="LogX"
-                        width={80}
-                        height={28}
+                        width={40}
+                        height={40}
                       />
                     </div>
+                    LogX
                   </Card>
-                  <Card className="mx-4 p-4 border border-border/30 shadow-sm">
+                  <Card className="p-4 border-2 border-primary/30 shadow-sm flex flex-row gap-3">
                     <div className="flex items-center justify-center h-8">
                       <Image
                         src="/logos/zetachain.svg"
                         alt="Zetachain"
-                        width={100}
-                        height={28}
+                        width={40}
+                        height={40}
                       />
                     </div>
+                    Zetachain
                   </Card>
-                  <Card className="mx-4 p-4 border border-border/30 shadow-sm">
+                  <Card className="p-4 border-2 border-primary/30 shadow-sm flex flex-row gap-3">
                     <div className="flex items-center justify-center h-8">
                       <Image
                         src="/logos/base.svg"
                         alt="Base"
-                        width={80}
-                        height={28}
+                        width={40}
+                        height={40}
                       />
                     </div>
+                    Base
                   </Card>
                 </div>
               ))}

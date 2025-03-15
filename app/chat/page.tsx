@@ -444,43 +444,43 @@ export default function ChatPage() {
             </Card>
           </div>
           {/* Powered by section */}
-          <div className="p-4 flex-row flex gap-6 justify-end items-center">
+          <div className="p-4 flex-row flex gap-3 justify-end items-center">
             <div className="flex justify-center items-center text-sm font-medium text-muted-foreground">
               Powered by
             </div>
             <div className="flex flex-wrap justify-center items-center">
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center z-10">
                 <Image
                   src="/logos/coinbase.svg"
                   alt="Coinbase"
-                  width={40}
-                  height={40}
+                  width={35}
+                  height={35}
                 />
               </div>
-              <div className="flex items-center justify-center h-8">
+              <div className="flex items-center justify-center h-8 z-9">
                 <Image
                   src="/logos/logx.svg"
                   alt="LogX"
-                  width={40}
-                  height={40}
+                  width={35}
+                  height={35}
                   className="ml-[-10px]"
                 />
               </div>
-              <div className="flex items-center justify-center h-8">
+              <div className="flex items-center justify-center h-8 z-8">
                 <Image
                   src="/logos/zetachain.svg"
                   alt="Zetachain"
-                  width={40}
-                  height={40}
+                  width={35}
+                  height={35}
                   className="ml-[-10px]"
                 />
               </div>
-              <div className="flex items-center justify-center h-8">
+              <div className="flex items-center justify-center h-8 z-5">
                 <Image
                   src="/logos/base.svg"
                   alt="Base"
-                  width={40}
-                  height={40}
+                  width={35}
+                  height={35}
                   className="ml-[-10px]"
                 />
               </div>
