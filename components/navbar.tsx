@@ -49,7 +49,7 @@ export function Navbar() {
       name: "Premax AI",
       path: "/premax",
       description:
-        "Bypass Pre-market AI inspector and predict on unlaunched tokens",
+        "Beat Pre-market AI agent and predict on unlaunched tokens",
       isActive: false,
     },
     {
@@ -93,12 +93,12 @@ export function Navbar() {
                           {product.name}
                         </Link>
                       ) : (
-                        <span className="px-3 py-2 text-sm font-medium rounded-md text-muted-foreground cursor-not-allowed flex items-center">
+                        <div className="relative px-3 py-2 text-sm font-medium rounded-md text-muted-foreground cursor-not-allowed">
                           {product.name}
-                          <span className="ml-2 text-xs px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-medium">
+                          <span className="absolute -bottom-1 -right-2 text-xs px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-medium inline-flex items-center justify-center leading-none ">
                             Soon
                           </span>
-                        </span>
+                        </div>
                       )}
                     </div>
                   </TooltipTrigger>

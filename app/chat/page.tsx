@@ -252,7 +252,7 @@ export default function ChatPage() {
           )}
         >
           <div className="flex-1 overflow-hidden p-4">
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col h-[calc(100vh-145px)]">
               <Card className="flex-1 flex flex-col border-2 border-primary/30 shadow-md bg-card/50 backdrop-blur-sm overflow-hidden">
                 <CardContent className="flex-1 overflow-y-auto p-4 pt-6 h-[calc(100vh-280px)]">
                   {/* Persistent welcome message */}
