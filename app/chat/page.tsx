@@ -1,6 +1,5 @@
 "use client";
 
-import { useChat } from "ai/react";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,18 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Send,
-  Bot,
-  User,
-  Moon,
-  Sun,
-  Clock,
-  DollarSign,
-  TrendingUp,
-  BarChart3,
-  Blocks,
-} from "lucide-react";
+import { Send, Bot, User, Clock, DollarSign, Blocks } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
@@ -34,14 +22,19 @@ import {
 } from "@/lib/transaction-utils";
 import Image from "next/image";
 import { Navbar } from "@/components/navbar";
+import useChat from "@/hooks/use-chat";
 
 export default function ChatPage() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } =
-    useChat({
-      initialMessages: [],
-    });
+  const {
+    messages,
+    sendMessage,
+    fetchMessages,
+    isFetching,
+    isSending,
+    input,
+    handleInputChange,
+  } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { theme, setTheme } = useTheme();
   const isMobile = useMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const { address, isConnected } = useAccount();
@@ -54,6 +47,10 @@ export default function ChatPage() {
     () => (balanceData ? balanceData.value >= getPromptFeeInEther() : false),
     [balanceData]
   );
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
 
   // Pool amount state
   const [poolAmount, setPoolAmount] = useState(10000); // $10,000 starting pool
@@ -125,8 +122,12 @@ export default function ChatPage() {
   const payAndSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isBalanceSufficient) return;
-    if (await sendPromptFee()) {
-      handleSubmit(e);
+    if (address != null && (await sendPromptFee())) {
+      sendMessage({
+        role: "user",
+        content: input ?? "Bullish",
+        address: address,
+      });
     }
   };
 
@@ -274,7 +275,7 @@ export default function ChatPage() {
                 <div className="space-y-4">
                   {messages.map((message, index) => (
                     <div
-                      key={message.id}
+                      key={index}
                       className={`flex ${
                         message.role === "user"
                           ? "justify-end"
@@ -312,7 +313,7 @@ export default function ChatPage() {
                       </div>
                     </div>
                   ))}
-                  {isLoading && (
+                  {isSending && (
                     <div className="flex justify-start animate-fade-in">
                       <div className="flex items-start gap-2 max-w-[80%]">
                         <div className="rounded-full p-2 bg-secondary text-secondary-foreground">
@@ -345,21 +346,22 @@ export default function ChatPage() {
                 >
                   <Input
                     ref={inputRef}
-                    value={input}
                     onChange={handleInputChange}
+                    value={input}
                     placeholder={
                       timeRemaining === 0
                         ? "Time's up! No more submissions."
                         : "Make your case for an options bet on BTC"
                     }
                     className="flex-1 bg-background/50 border-border/50 focus:ring-2 focus:ring-primary/50 transition-all duration-300"
-                    disabled={isLoading || timeRemaining === 0}
-                    maxLength={400}
+                    disabled={isFetching || isSending || timeRemaining === 0}
+                    maxLength={300}
                   />
                   <Button
                     type="submit"
                     disabled={
-                      isLoading ||
+                      isFetching ||
+                      isSending ||
                       !input.trim() ||
                       timeRemaining === 0 ||
                       !isBalanceSufficient ||
